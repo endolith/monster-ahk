@@ -1,11 +1,17 @@
-﻿; MONSTER Version 0.9 (needs AHK 1.0.46.09+)
-; EVALUATE ARITHMETIC EXPRESSIONS containing HEX, Binary ('1001), scientific numbers (1.2e+5)
-; (..); variables, constants: e, pi, inch, foot, mile, ounce, pint, gallon, oz, lb;
-; (? :); logicals ||; &&; relationals =,<>; <,>,<=,>=; user operators GCD,MIN,MAX,Choose;
-; |; ^; &; <<, >>; +, -; *, /, \ (or % = mod); ** (or @ = power); !,~;
-; Functions Abs|Ceil|Exp|Floor|Log|Ln|Round|Sqrt|Sin|Cos|Tan|ASin|ACos|ATan|SGN|Fib|fac
-; Output = No $: .6 digit decimal; $x,$h: Hex; $b{W}: W-bit binary; ${k}: .k-digit decimal
-; "Assignments;" can preceed an expression: a:=1; b:=2; a+b
+; MONSTER Version 1.2 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
+; Containing HEX, Signed Binary ('11 = -1, '011 = 3), scientific numbers (1.2e+5)
+; Assignments :=, preceding an expression. E.g: a:=1; b:=2; a+b
+; User defined functions: f(x) := expr;
+; AHK Functions Abs|Ceil|Exp|Floor|Log|Ln|Round|Sqrt|Sin|Cos|Tan|ASin|ACos|ATan
+; Predefined functions: SGN|Fib|Fac (sign, Fibonacci numbers, Factorials)
+; '(',')'; Variables; Predefined operators GCD,MIN,MAX,Choose (2-parameter functions)
+; Predefined constants: e, pi, inch, foot, mile, ounce, pint, gallon, oz, lb;
+; Logic operators: !, ||, &&; ternary operator: (_?_:_);
+; Relations: =,<>; <,>,<=,>=
+; Binary operators: ~; |, ^, &, <<, >>
+; Arithmetic operators: +, -; *, /, \ (or % = mod); ** (or @ = power)
+; Output FORMAT: $x,$h: Hex; $b{W}: W-bit binary;
+;    ${k}: k-digit fixpoint,  ${k}e,${k}g: k-digit scientific (Default $6g)
 
 #SingleInstance Force
 #NoEnv
@@ -18,19 +24,27 @@ xounce := 0.02841, xpint := 0.5682, xgallon := 4.54609 ; liters
 xoz := 28.35, xlb := 453.59237                         ; gramms
 
 /* -test cases
-MsgBox % Eval("1e3 -.5e+2 + 100.e-1")                              ; 960.000000
-MsgBox % Eval("x := y:1; x := 5*x; y := x+1")                      ; 6 if y empty, x := 1...
+MsgBox % Eval("1e1")                                               ; 10
+MsgBox % Eval("0x1E")                                              ; 30
+MsgBox % Eval("ToBin(35)")                                         ; 100011
+MsgBox % Eval("$b 35")                                             ; 0100011
+MsgBox % Eval("'10010")                                            ; -14
+MsgBox % Eval("2>3 ? 9 : 7")                                       ; 7
+MsgBox % Eval("$2E 1e3 -50.0e+0 + 100.e-1")                        ; 9.60E+002
+MsgBox % Eval("fact(x) := x < 2 ? 1 : x*fact(x-1); fact(5)")       ; 120
+MsgBox % Eval("f(ab):=sqrt(ab)/ab; y:=f(2); ff(y):=y*(y-1)/2/x; x := 2; y+ff(3)/f(16)") ; 6.70711
+MsgBox % Eval("x := qq:1; x := 5*x; y := x+1")                     ; 6 [if y empty, x := 1...]
 MsgBox % Eval("x:=-!0; x<0 ? 2*x : sqrt(x)")                       ; -2
-MsgBox % Eval("tan(atan(atan(tan(1))))-exp(sqrt(1))")              ; -1.718282
+MsgBox % Eval("tan(atan(atan(tan(1))))-exp(sqrt(1))")              ; -1.71828
 MsgBox % Eval("---2+++9 + ~-2 --1 -2*-3")                          ; 15
-MsgBox % Eval("x1:=1; f1:=sin(x1)/x1; y:=2; f2:=sin(y)/y; f1/f2")  ; 1.850815
-MsgBox % Eval("Round(fac(10)/fac(5)**2) - (10choose5) + Fib(8)")   ; 21
+MsgBox % Eval("x1:=1; f1:=sin(x1)/x1; y:=2; f2:=sin(y)/y; f1/f2")  ; 1.85082
+MsgBox % Eval("Round(fac(10)/fac(5)**2) - (10 choose 5) + Fib(8)") ; 21
 MsgBox % Eval("1 min-1 min-2 min 2")                               ; -2
 MsgBox % Eval("(-1>>1<=9 && 3>2)<<2>>1")                           ; 2
 MsgBox % Eval("(1 = 1) + (2<>3 || 2 < 1) + (9>=-1 && 3>2)")        ; 3
 MsgBox % Eval("$b6 -21/3")                                         ; 111001
 MsgBox % Eval("$b ('1001 << 5) | '01000")                          ; 100101000
-MsgBox % Eval("$0 194*lb/1000")                                    ; 88 Kg
+MsgBox % Eval("$0 194*lb/1000")                                    ; 88 [Kg]
 MsgBox % Eval("$x ~0xfffffff0 & 7 | 0x100 << 2")                   ; 0x407
 MsgBox % Eval("- 1 * (+pi -((3%5))) +pi+ 1-2 + e-ROUND(abs(sqrt(floor(2)))**2)-e+pi $9") ; 3.141592654
 MsgBox % Eval("(20+4 GCD abs(2**4)) + (9 GCD (6 CHOOSE 2))")       ; 11
@@ -38,7 +52,7 @@ t := A_TickCount
 Loop 1000
    r := Eval("x:=" A_Index/1000 ";atan(x)-exp(sqrt(x))")           ; simulated plot
 t := A_TickCount - t
-MsgBox Result = %r%`nTime = %t%                                    ; -1.932884. ~360 ms
+MsgBox Result = %r%`nTime = %t%                                    ; -1.93288: ~400 ms [on Inspiron 9300]
 */
 
 ^#-::                                  ; Replace selection or `expression with result
@@ -56,74 +70,90 @@ MsgBox Result = %r%`nTime = %t%                                    ; -1.932884. 
       SendInput % "{RAW}" . (A_ThisHotKey="^#=" ? ClipBoard . " = "  : "") . Eval(ClipBoard)
 Return
 
-Eval(x) {                              ; non-recursive PRE/POST PROCESSING: I/O forms, 'func', ";"
+Eval(x) {                              ; non-recursive PRE/POST PROCESSING: I/O forms, numbers, ops, ";"
    Local FORM, FormF, FormI, i, W, y, y1, y2, y3, y4
    FormI := A_FormatInteger, FormF := A_FormatFloat
 
    SetFormat Integer, D                ; decimal intermediate results!
-   RegExMatch(x, "\$(b|h|x|)(\d*)", y)
+   RegExMatch(x, "\$(b|h|x|)(\d*[eEgG]?)", y)
    FORM := y1, W := y2                 ; HeX, Bin, .{digits} output format
-   SetFormat FLOAT, % y1<>""||W="" ? 0.6 : "0." . W ; Default = 6 decimal places
+   SetFormat FLOAT, 0.16e              ; Full intermediate float precision
    StringReplace x, x, %y%             ; remove $..
-   Loop
-      If RegExMatch(x,"(.*?)(\d+[\.]?\d*|\d*[\.]?\d+)e([\+-]?\d+)(.*)",y) ; 1st group un-greedy: full constant
-         x := y1 . y2*10**y3 . y4      ; convert scientific constants to decimal (for speed)
-      Else Break
    Loop
       If RegExMatch(x, "i)(.*)(0x[a-f\d]*)(.*)", y)
          x := y1 . y2+0 . y3           ; convert hex numbers to decimal
       Else Break
    Loop
       If RegExMatch(x, "(.*)'([01]*)(.*)", y)
-         x := y1 . FromBin(y2) . y3     ; convert binary numbers to decimal: sign = first bit
+         x := y1 . FromBin(y2) . y3    ; convert binary numbers to decimal: sign = first bit
       Else Break
+   x := RegExReplace(x,"(^|[^.\d])(\d+)(e|E)","$1$2.$3") ; add missing '.' before E (1e3 -> 1.e3)
+                                       ; literal scientific numbers between ‘ and ’ chars
+   x := RegExReplace(x,"(\d*\.\d*|\d)([eE][+-]?\d+)","‘$1$2’")
 
    StringReplace x, x,`%, \, All       ; %  -> \ (= MOD)
    StringReplace x, x, **,@, All       ; ** -> @ for easier process
-   StringReplace x, x, -, #, All       ; # = subtraction, different from sign
-
-   x := RegExReplace(x, "([\)\.\w]\s+|[\)\.\d])([a-z_A-Z]+)","$1'$2'") ; op -> 'op', vars remain
-
-   x := RegExReplace(x,"\s*")          ; remove spaces, tabs, newlines
-
-   x := RegExReplace(x,"([a-z_A-Z]\w*)\(","'$1'(") ; "func(" -> "'func'(" to avoid atan|tan conflicts
+   StringReplace x, x, +, ±, All       ; ± is addition
+   x := RegExReplace(x,"(‘[^’]*)±","$1+") ; ...not inside literal numbers
+   StringReplace x, x, -, ¬, All       ; ¬ is subtraction
+   x := RegExReplace(x,"(‘[^’]*)¬","$1-") ; ...not inside literal numbers
 
    Loop Parse, x, `;
       y := Eval1(A_LoopField)          ; work on pre-processed sub expressions
-                                       ; return result of last sub-expression
-   If FORM = b                         ; convert to binary
+                                       ; return result of last sub-expression (numeric)
+   If FORM = b                         ; convert output to binary
       y := W ? ToBinW(Round(y),W) : ToBin(Round(y))
    Else If (FORM="h" or FORM="x") {
-      SetFormat Integer, Hex           ; convert to hex
+      SetFormat Integer, Hex           ; convert output to hex
       y := Round(y) + 0
+   }
+   Else {
+      W := W="" ? "0.6g" : "0." . W    ; Set output form, Default = 6 decimal places
+      SetFormat FLOAT, %W%
+      y += 0.0
    }
    SetFormat Integer, %FormI%          ; restore original formats
    SetFormat FLOAT,   %FormF%
    Return y
 }
 
-Eval1(x) {                             ; recursive PREPROCESSING of :=, vars, (..) [decimal, no space or ";"]
+Eval1(x) {                             ; recursive PREPROCESSING of :=, vars, (..) [decimal, no ";"]
    Local i, y, y1, y2, y3
-   StringGetPos i, x, :=               ; execute leftmost ":=" operator
-   If (i >= 0) {
-      y := "x" . SubStr(x,1,i)         ; user vars internally start with x to avoid name conflicts
-      Return %y% := Eval1(SubStr(x,3+i))
-   }                                   ; when here: no variable on the left of last ":="
-   x := RegExReplace(x,"([a-z_A-Z]\w*)([^\w'\]]|$)","%x$1%$2") ; VAR -> %xVAR%; func', op] remains
+                                       ; save function definition: f(x) := expr
+   If RegExMatch(x, "(\S*?)\((.*?)\)\s*:=\s*(.*)", y) {
+      f%y1%__X := y2, f%y1%__F := y3
+      Return
+   }
+                                       ; execute leftmost ":=" operator of a := b := ...
+   If RegExMatch(x, "(\S*?)\s*:=\s*(.*)", y) {
+      y := "x" . y1                    ; user vars internally start with x to avoid name conflicts
+      Return %y% := Eval1(y2)
+   }
+                                       ; here: no variable to the left of last ":="
+   x := RegExReplace(x,"([\)’.\w]\s+|[\)’])([a-z_A-Z]+)","$1«$2»")  ; op -> «op»
+
+   x := RegExReplace(x,"\s+")          ; remove spaces, tabs, newlines
+
+   x := RegExReplace(x,"([a-z_A-Z]\w*)\(","'$1'(") ; func( -> 'func'( to avoid atan|tan conflicts
+
+   x := RegExReplace(x,"([a-z_A-Z]\w*)([^\w'»’]|$)","%x$1%$2") ; VAR -> %xVAR%
+   x := RegExReplace(x,"(‘[^’]*)%x[eE]%","$1e") ; in numbers %xe% -> e
+   x := RegExReplace(x,"‘|’")          ; no more need for number markers
    Transform x, Deref, %x%             ; dereference all right-hand-side %var%-s
 
    Loop {                              ; find last innermost (..)
       If RegExMatch(x, "(.*)\(([^\(\)]*)\)(.*)", y)
-         x := y1 . Eval@(y2) . y3      ; replace "(x)" with value of x (global y3 does not change in Eval@)
+         x := y1 . Eval@(y2) . y3      ; replace (x) with value of x
       Else Break
    }
    Return Eval@(x)
 }
 
-Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [decimal, NO: vars, (..), ";", ":="]
+Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [decimal, NO space, vars, (..), ";", ":="]
    Local i, y, y1, y2, y3, y4
-   If x is number
-      Return x                         ; no more operators left
+
+   If x is number                      ; no more operators left
+      Return x
                                        ; execute rightmost ?,: operator
    RegExMatch(x, "(.*)(\?|:)(.*)", y)
    IfEqual y2,?,  Return Eval@(y1) ? Eval@(y3) : ""
@@ -144,11 +174,9 @@ Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [dec
    IfEqual y2,<=, Return Eval@(y1) <= Eval@(y3)
    IfEqual y2,>=, Return Eval@(y1) >= Eval@(y3)
                                        ; execute rightmost user operator (low precedence)
-   RegExMatch(x, "i)(.*)'(gcd|min|max|choose)'(.*)", y)
-   IfEqual y2,choose,Return Choose(Eval@(y1),Eval@(y3))
-   IfEqual y2,Gcd,   Return GCD(   Eval@(y1),Eval@(y3))
-   IfEqual y2,Min,   Return (y1:=Eval@(y1)) < (y3:=Eval@(y3)) ? y1 : y3
-   IfEqual y2,Max,   Return (y1:=Eval@(y1)) > (y3:=Eval@(y3)) ? y1 : y3
+   RegExMatch(x, "i)(.*)«(.*?)»(.*)", y)
+   If IsFunc(y2)
+      Return %y2%(Eval@(y1),Eval@(y3)) ; predefined relational ops
 
    StringGetPos i, x, |, R             ; execute rightmost | operator
    IfGreaterOrEqual i,0, Return Eval@(SubStr(x,1,i)) | Eval@(SubStr(x,2+i))
@@ -161,11 +189,11 @@ Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [dec
    IfEqual y2,<<, Return Eval@(y1) << Eval@(y3)
    IfEqual y2,>>, Return Eval@(y1) >> Eval@(y3)
                                        ; execute rightmost +- (not unary) operator
-   RegExMatch(x, "(.*[^!\@\*\/\\\~\+\#])(\+|\#)(.*)", y) ; lower precedence ops are already handled
-   IfEqual y2,+,  Return Eval@(y1) + Eval@(y3)
-   IfEqual y2,#,  Return Eval@(y1) - Eval@(y3)
+   RegExMatch(x, "(.*[^!\~±¬\@\*/\\])(±|¬)(.*)", y) ; lower precedence ops already handled
+   IfEqual y2,±,  Return Eval@(y1) + Eval@(y3)
+   IfEqual y2,¬,  Return Eval@(y1) - Eval@(y3)
                                        ; execute rightmost */% operator
-   RegExMatch(x, "(.*)(\*|\/|\\)(.*)", y)
+   RegExMatch(x, "(.*)(\*|/|\\)(.*)", y)
    IfEqual y2,*,  Return Eval@(y1) * Eval@(y3)
    IfEqual y2,/,  Return Eval@(y1) / Eval@(y3)
    IfEqual y2,\,  Return Mod(Eval@(y1),Eval@(y3))
@@ -173,47 +201,15 @@ Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [dec
    StringGetPos i, x, @, R
    IfGreaterOrEqual i,0, Return Eval@(SubStr(x,1,i)) ** Eval@(SubStr(x,2+i))
                                        ; execute rightmost function, unary operator
-   If !RegExMatch(x,"i)(.*)(!|\+|\#|\~|'(Abs|Ceil|Exp|Floor|Log|Ln|Round|Sqrt|Sin|Cos|Tan|ASin|ACos|ATan|Sgn|Fib|fac)')([-\d\.]+)", y)
+   If !RegExMatch(x,"(.*)(!|±|¬|~|'(.*)')(.*)", y)
       Return x                         ; no more function (y1 <> "" only at multiple unaries: --+-)
    IfEqual y2,!,Return Eval@(y1 . !y4) ; unary !
-   IfEqual y2,+,Return Eval@(y1 .  y4) ; unary +
-   IfEqual y2,#,Return Eval@(y1 . -y4) ; unary - (they behave like functions)
+   IfEqual y2,±,Return Eval@(y1 .  y4) ; unary +
+   IfEqual y2,¬,Return Eval@(y1 . -y4) ; unary - (they behave like functions)
    IfEqual y2,~,Return Eval@(y1 . ~y4) ; unary ~
-   GoTo %y3%                           ; functions are executed last: y4 is number
-Abs:
-   Return Eval@(y1 . Abs(y4))
-Ceil:
-   Return Eval@(y1 . Ceil(y4))
-Exp:
-   Return Eval@(y1 . Exp(y4))
-Floor:
-   Return Eval@(y1 . Floor(y4))
-Log:
-   Return Eval@(y1 . Log(y4))
-Ln:
-   Return Eval@(y1 . Ln(y4))
-Round:
-   Return Eval@(y1 . Round(y4))
-Sqrt:
-   Return Eval@(y1 . Sqrt(y4))
-Sin:
-   Return Eval@(y1 . Sin(y4))
-Cos:
-   Return Eval@(y1 . Cos(y4))
-Tan:
-   Return Eval@(y1 . Tan(y4))
-ASin:
-   Return Eval@(y1 . ASin(y4))
-ACos:
-   Return Eval@(y1 . ACos(y4))
-ATan:
-   Return Eval@(y1 . ATan(y4))
-Sgn:
-   Return Eval@(y1 . (y4>0)-(y4<0)) ; Sign of x = (x>0)-(x<0)
-Fib:
-   Return Eval@(y1 . Fib(y4))
-Fac:
-   Return Eval@(y1 . Fac(y4))
+   If IsFunc(y3)
+      Return Eval@(y1 . %y3%(y4))      ; built-in and predefined functions(y4)
+   Return Eval@(y1 . Eval1(RegExReplace(f%y3%__F, f%y3%__X, y4))) ; LAST: user defined functions
 }
 
 ToBin(n) {      ; Binary representation of n. 1st bit is SIGN: -8 -> 1000, -1 -> 1, 0 -> 0, 8 -> 01000
@@ -231,6 +227,16 @@ FromBin(bits) { ; Number converted from the binary "bits" string, 1st bit is SIG
    Return n - (SubStr(bits,1,1)<<StrLen(bits))
 }
 
+Sgn(x) {
+   Return (x>0)-(x<0)
+}
+
+MIN(a,b) {
+   Return a<b ? a : b
+}
+MAX(a,b) {
+   Return a<b ? b : a
+}
 GCD(a,b) {      ; Euclidean GCD
    Return b=0 ? Abs(a) : GCD(b, mod(a,b))
 }
