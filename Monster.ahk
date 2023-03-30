@@ -1,4 +1,13 @@
-; MONSTER Version 1.2 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
+﻿; Custom icon from http://www.famfamfam.com/lab/icons/silk/preview.php
+; Converted from PNG to ICO
+Menu, Tray, Icon, calculator.ico
+
+; Ctrl+Win+- replaces the expression with the result
+; Ctrl+Win+= appends an "=" and the result.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; MONSTER Version 1.3 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
 ; Containing HEX, Signed Binary ('11 = -1, '011 = 3), scientific numbers (1.2e+5)
 ; Assignments :=, preceding an expression. E.g: a:=1; b:=2; a+b
 ; User defined functions: f(x) := expr;
