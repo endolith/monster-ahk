@@ -76,6 +76,9 @@ MsgBox Result = %r%`nTime = %t%                                    ; -1.93288: ~
       ClipWait 1
       IfEqual ErrorLevel,1, Return
       If RegExMatch(ClipBoard, "(.*)(``)(.*)", y)
+         ; TODO: Instead of rewriting the entire line (which takes a long time and results in
+         ; corruption if interrupted), just move cursor to {END} of line, split input string
+         ; at `, backspace that many and Eval just the tail
          SendInput %  "{RAW}" y1 . (A_ThisHotKey="^#=" ? y3 . " = "  : "") . Eval(y3)
    } Else                              ; Text selected: Process it
       SendInput % "{RAW}" . (A_ThisHotKey="^#=" ? ClipBoard . " = "  : "") . Eval(ClipBoard)
