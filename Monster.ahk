@@ -7,7 +7,7 @@ Menu, Tray, Icon, calculator.ico
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; MONSTER Version 1.3 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
+; MONSTER Version 1.4 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
 ; Containing HEX, Signed Binary ('11 = -1, '011 = 3), scientific numbers (1.2e+5)
 ; Assignments :=, preceding an expression. E.g: a:=1; b:=2; a+b
 ; User defined functions: f(x) := expr;
@@ -104,6 +104,7 @@ Eval(x) {                              ; non-recursive PRE/POST PROCESSING: I/O 
    StringReplace x, x, **,@, All       ; ** -> @ for easier process
    StringReplace x, x, +, ±, All       ; ± is addition
    x := RegExReplace(x,"(‘[^’]*)±","$1+") ; ...not inside literal numbers
+   StringReplace x, x, –, -, All       ; normalize en-dash (e.g. from Word) to hyphen first
    StringReplace x, x, -, ¬, All       ; ¬ is subtraction
    x := RegExReplace(x,"(‘[^’]*)¬","$1-") ; ...not inside literal numbers
 
