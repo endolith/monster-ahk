@@ -270,3 +270,104 @@ Fib(n) {        ; n-th Fibonacci number (n < 0 OK, iterative to avoid globals)
 fac(n) {        ; n!
    Return n<2 ? 1 : n*fac(n-1)
 }
+
+; ========================================================
+; Audio conversions added by endolith
+
+dB(x) {        ; voltage ratio to decibels
+   if (x = 0)
+      Return -999  ; -inf, but Eval(x) doesn't allow strings
+   Return 20*log(x)
+}
+
+idB(x) {        ; decibels to voltage ratio
+   Return 10**(x/20)
+}
+
+;; doesn't work.  I don't know why.  always returns 0
+;par(x,y) {        ; parallel resistors
+;   Return x*y/(x+y)
+;}
+
+dBu(x) {        ; volts RMS to dBu
+   Return dB((sqrt(5)*x) / sqrt(3))
+}
+
+idBu(x) {       ; dBu to volts RMS
+   Return sqrt(3) * idB(x) / sqrt(5)
+}
+
+dBV(x) {        ; volts RMS to dBV
+   Return dB(x)
+}
+
+idBV(x) {       ; dBV to volts RMS
+   Return idB(x)
+}
+
+; Actually this is probably better:
+; Capitalization doesn't matter
+
+vrms2dbu(x) {       ; volts RMS to dBu
+   Return dB((sqrt(5)*x) / sqrt(3))
+}
+
+dbu2vrms(x) {       ; dBu to volts RMS
+   Return sqrt(3) * idB(x) / sqrt(5)
+}
+
+vrms2dbv(x) {       ; volts RMS to dBV
+   Return dB(x)
+}
+
+dbv2vrms(x) {       ; dBV to volts RMS
+   Return idB(x)
+}
+
+vpk2dbu(x) {        ; volts peak to dBu (sine wave)
+   Return dB((sqrt(5)*x) / sqrt(3) / sqrt(2))
+}
+
+dbu2vpk(x) {        ; dBu to volts peak (sine wave)
+   Return sqrt(2) * sqrt(3) * idB(x) / sqrt(5)
+}
+
+vpk2dbv(x) {        ; volts peak to dBV (sine wave)
+   Return dB(x / sqrt(2))
+}
+
+dbv2vpk(x) {        ; dBV to volts peak (sine wave)
+   Return sqrt(2) * idB(x)
+}
+
+vpp2dbu(x) {        ; volts peak-to-peak to dBu (sine wave)
+   Return dB((sqrt(5)*x) / sqrt(3) / sqrt(2) / 2)
+}
+
+dbu2vpp(x) {        ; dBu to volts peak-to-peak (sine wave)
+   Return 2 * sqrt(2) * sqrt(3) * idB(x) / sqrt(5)
+}
+
+vpp2dbv(x) {        ; volts peak-to-peak to dBV (sine wave)
+   Return dB(x / sqrt(2) / 2)
+}
+
+dbv2vpp(x) {        ; dBV to volts peak-to-peak (sine wave)
+   Return 2 * sqrt(2) * idB(x)
+}
+
+dbv2dbu(x) {        ; dBV to dBu
+   Return x + 2.21848749616356367491233
+}
+
+dbu2dbv(x) {        ; dBu to dBV
+   Return x - 2.21848749616356367491233
+}
+
+db2pct(x) {         ; dB to percent (distortion)
+   Return idb(x) * 100
+}
+
+pct2db(x) {         ; percent to dB (distortion)
+   Return dB(x/100)
+}
