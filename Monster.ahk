@@ -123,7 +123,11 @@ Eval(x) {                              ; non-recursive PRE/POST PROCESSING: I/O 
       y := Round(y) + 0
    }
    Else {
-      W := W="" ? "0.6f" : "0." . W    ; Set output form, Default = 6 decimal places
+      if (Mod(y, 1) == 0) {
+         W := "0.0f"
+      } else {
+         W := W="" ? "0.6f" : "0." . W    ; Set output form, Default = 6 decimal places
+      }
       SetFormat FLOAT, %W%
       y += 0.0
    }
