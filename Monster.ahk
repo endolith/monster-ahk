@@ -156,7 +156,7 @@ Eval1(x) {                             ; recursive PREPROCESSING of :=, vars, (.
          x := y1 . Eval@(y2) . y3      ; replace (x) with value of x
       Else Break
    }
-   Return Eval@(x)
+Return Eval@(x)
 }
 
 Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [decimal, NO space, vars, (..), ";", ":="]
