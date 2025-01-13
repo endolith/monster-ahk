@@ -245,16 +245,19 @@ Sgn(x) {
    Return (x>0)-(x<0)
 }
 
-MIN(a,b) {
+MIN(a,b) {        ; minimum of two numbers - use: "a min b"
    Return a<b ? a : b
 }
-MAX(a,b) {
+
+MAX(a,b) {        ; maximum of two numbers - use: "a max b"
    Return a<b ? b : a
 }
-GCD(a,b) {      ; Euclidean GCD
+
+GCD(a,b) {      ; Euclidean GCD - use: "a gcd b"
    Return b=0 ? Abs(a) : GCD(b, mod(a,b))
 }
-Choose(n,k) {   ; Binomial coefficient
+
+Choose(n,k) {   ; Binomial coefficient - use: "n choose k"
    p := 1, i := 0, k := k < n-k ? k : n-k
    Loop %k%                   ; Recursive (slower): Return k = 0 ? 1 : Choose(n-1,k-1)*n//k
       p *= (n-i)/(k-i), i+=1  ; FOR INTEGERS: p *= n-i, p //= ++i
@@ -267,6 +270,7 @@ Fib(n) {        ; n-th Fibonacci number (n < 0 OK, iterative to avoid globals)
       c := b, b += a, a := c
    Return n=0 ? 0 : n>0 || n&1 ? b : -b
 }
+
 fac(n) {        ; n!
    Return n<2 ? 1 : n*fac(n-1)
 }
@@ -274,20 +278,20 @@ fac(n) {        ; n!
 ; ========================================================
 ; Audio conversions added by endolith
 
-dB(x) {        ; voltage ratio to decibels
+dB(x) {        ; voltage ratio to decibels - use: "dB(x)" or "x dB"
    if (x = 0)
       Return -999  ; -inf, but Eval(x) doesn't allow strings
    Return 20*log(x)
 }
 
-idB(x) {        ; decibels to voltage ratio
+idB(x) {        ; decibels to voltage ratio - use: "idB(x)" or "x dB"
    Return 10**(x/20)
 }
 
-;; doesn't work.  I don't know why.  always returns 0
-;par(x,y) {        ; parallel resistors
-;   Return x*y/(x+y)
-;}
+; parallel resistors - must use infix notation: "10 par 5" or "10 par 10 par 10"
+par(x,y) {
+   Return x*y/(x+y)
+}
 
 dBu(x) {        ; volts RMS to dBu
    Return dB((sqrt(5)*x) / sqrt(3))
