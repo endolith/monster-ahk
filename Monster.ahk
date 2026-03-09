@@ -289,6 +289,7 @@ idB(x) {        ; decibels to voltage ratio - use: "idB(x)" or "x dB"
 }
 
 ; parallel resistors - must use infix notation: "10 par 5" or "10 par 10 par 10"
+; (par(x,y) gets a single string arg, not two numbers)
 par(x,y) {
    Return x*y/(x+y)
 }
