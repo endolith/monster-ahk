@@ -9,6 +9,10 @@ Menu, Tray, Icon, calculator.ico
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; THIS BUILD DIFFERS FROM STANDARD MONSTER.AHK:
+;   || is PARALLEL RESISTANCE (a||b = par(a,b)), right-associative for a||b||c||...
+;   Standard Monster.ahk uses || for logical OR. There is no logical OR in this build.
+
 ; MONSTER Version 1.5 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
 ; Containing HEX, Signed Binary ('11 = -1, '011 = 3), scientific numbers (1.2e+5)
 ; Assignments :=, preceding an expression. E.g: a:=1; b:=2; a+b
@@ -17,7 +21,7 @@ Menu, Tray, Icon, calculator.ico
 ; Predefined functions: SGN|Fib|Fac (sign, Fibonacci numbers, Factorials)
 ; '(',')'; Variables; Predefined operators GCD,MIN,MAX,Choose (2-parameter functions)
 ; Predefined constants: e, pi, inch, foot, mile, ounce, pint, gallon, oz, lb;
-; Logic operators: !, ||, &&; ternary operator: (_?_:_);
+; Logic operators: !, &&; ternary: (_?_:_).  || = parallel resistance (this build only; standard Monster uses || for logical OR)
 ; Relations: =,<>; <,>,<=,>=
 ; Binary operators: ~; |, ^, &, <<, >>
 ; Arithmetic operators: +, -; *, /, \ (or % = mod); ** (or @ = power)
@@ -52,7 +56,7 @@ MsgBox % Eval("x1:=1; f1:=sin(x1)/x1; y:=2; f2:=sin(y)/y; f1/f2")  ; 1.85082
 MsgBox % Eval("Round(fac(10)/fac(5)**2) - (10 choose 5) + Fib(8)") ; 21
 MsgBox % Eval("1 min-1 min-2 min 2")                               ; -2
 MsgBox % Eval("(-1>>1<=9 && 3>2)<<2>>1")                           ; 2
-MsgBox % Eval("(1 = 1) + (2<>3 || 2 < 1) + (9>=-1 && 3>2)")        ; 3
+MsgBox % Eval("(1 = 1) + (2<>3) + (9>=-1 && 3>2)")        ; 3  (|| is now parallel, not logical OR)
 MsgBox % Eval("$b6 -21/3")                                         ; 111001
 MsgBox % Eval("$b ('1001 << 5) | '01000")                          ; 100101000
 MsgBox % Eval("$0 194*lb/1000")                                    ; 88 [Kg]
@@ -178,8 +182,8 @@ Eval@(x) {                             ; EVALUATE PRE-PROCESSED EXPRESSIONS [dec
    IfEqual y2,?,  Return Eval@(y1) ? Eval@(y3) : ""
    IfEqual y2,:,  Return ((y := Eval@(y1)) = "" ? Eval@(y3) : y)
 
-   StringGetPos i, x, ||, R            ; execute rightmost || operator
-   IfGreaterOrEqual i,0, Return Eval@(SubStr(x,1,i)) || Eval@(SubStr(x,3+i))
+   StringGetPos i, x, ||, R            ; parallel resistance: a||b = par(a,b), right-assoc for a||b||c
+   IfGreaterOrEqual i,0, Return par(Eval@(SubStr(x,1,i)), Eval@(SubStr(x,3+i)))
    StringGetPos i, x, &&, R            ; execute rightmost && operator
    IfGreaterOrEqual i,0, Return Eval@(SubStr(x,1,i)) && Eval@(SubStr(x,3+i))
                                        ; execute rightmost =, <> operator
@@ -295,7 +299,7 @@ idB(x) {        ; decibels to voltage ratio - use: "idB(x)" or "x dB"
    Return 10**(x/20)
 }
 
-; parallel resistors - must use infix notation: "10 par 5" or "10 par 10 par 10"
+; parallel resistors - must use infix notation: "10 par 5" or "10 || 10 || 10"
 ; (par(x,y) gets a single string arg, not two numbers)
 par(x,y) {
    Return x*y/(x+y)

@@ -42,7 +42,7 @@ There are many features supported in the expressions:
 - arbitrary number of nested parentheses (..)
 - variables (`a`, `b`), constants (`e`, `pi`, `inch`, `foot`, `mile`, `ounce`, `pint`, `gallon`, `oz`, `lb`) — Liquid measures are US, in liters
 - user defined functions
-- ternary- (`_ ? _ : _`) and logical operators `!`; `||`; `&&`
+- ternary (`_ ? _ : _`) and logical operators `!`, `&&` — this build uses `||` for parallel resistance, not logical OR (standard Monster uses `||` for OR)
 - relational operators `=`; `<>`; `<`; `>`; `<=`; `>=`
 - special operators: `GCD`, `MIN`, `MAX`, `Choose`;
 - bitwise operators `~`; `|`; `^`; `&`; `<<`; `>>`
