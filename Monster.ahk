@@ -231,7 +231,7 @@ ToBinW(n,W=8) { ; LS W-bits of Binary representation of n
    Return b
 }
 FromBin(bits) { ; Number converted from the binary "bits" string, 1st bit is SIGN
-   n = 0
+   n := 0
    Loop Parse, bits
       n += n + A_LoopField
    Return n - (SubStr(bits,1,1)<<StrLen(bits))
