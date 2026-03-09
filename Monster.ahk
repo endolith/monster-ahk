@@ -7,7 +7,7 @@ Menu, Tray, Icon, calculator.ico
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; MONSTER Version 1.4 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
+; MONSTER Version 1.5 to EVALUATE ARITHMETIC EXPRESSIONS in strings (needs AHK 1.0.48+)
 ; Containing HEX, Signed Binary ('11 = -1, '011 = 3), scientific numbers (1.2e+5)
 ; Assignments :=, preceding an expression. E.g: a:=1; b:=2; a+b
 ; User defined functions: f(x) := expr;
@@ -226,6 +226,8 @@ ToBin(n) {      ; Binary representation of n. 1st bit is SIGN: -8 -> 1000, -1 ->
    Return n=0||n=-1 ? -n : ToBin(n>>1) . n&1
 }
 ToBinW(n,W=8) { ; LS W-bits of Binary representation of n
+   Local b
+   b := ""
    Loop %W%     ; Recursive (slower): Return W=1 ? n&1 : ToBinW(n>>1,W-1) . n&1
       b := n&1 . b, n >>= 1
    Return b
