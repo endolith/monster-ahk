@@ -1,0 +1,71 @@
+TEST INSTRUCTIONS
+- For each case below, do exactly what it says on the provided input line.
+- "Select only 2+2" means highlight just those three characters.
+- "No selection" means place caret at end of line and highlight nothing.
+- After pressing the hotkey once, leave the resulting text as-is.
+- Save results to a separate file and send it for diff.
+
+CASE 1 - Selected expression, replace with result
+Action: Select only 2+2, press Ctrl+Win+-
+Input line:
+    this and then 2+2
+
+CASE 2 - Selected expression, append = result
+Action: Select only 2+2, press Ctrl+Win+=
+Input line:
+    this and then 2+2
+
+CASE 3 - No selection, whole line is expression, replace with result
+Action: No selection, caret at end of line, press Ctrl+Win+-
+Input line:
+    2+2
+
+CASE 4 - No selection, whole line is expression, append = result
+Action: No selection, caret at end of line, press Ctrl+Win+=
+Input line:
+    2+2
+
+CASE 5 - No selection, non-math prefix + expression, replace with result
+Action: No selection, caret at end of line, press Ctrl+Win+-
+Input line:
+    this and then 2+2
+
+CASE 6 - No selection, non-math prefix + expression, append = result
+Action: No selection, caret at end of line, press Ctrl+Win+=
+Input line:
+    this and then 2+2
+
+CASE 7 - No selection, backtick expression, replace with result
+Action: No selection, caret at end of line, press Ctrl+Win+-
+Input line:
+    this and then `2+2
+
+CASE 8 - No selection, backtick expression, append = result
+Action: No selection, caret at end of line, press Ctrl+Win+=
+Input line:
+    this and then `2+2
+
+CASE 9 - No selection, negative arithmetic, replace with result
+Action: No selection, caret at end of line, press Ctrl+Win+-
+Input line:
+    -2+3
+
+CASE 10 - No selection, power operator, replace with result
+Action: No selection, caret at end of line, press Ctrl+Win+-
+Input line:
+    2**5
+
+CASE 11 - No selection, hex literal expression, replace with result
+Action: No selection, caret at end of line, press Ctrl+Win+-
+Input line:
+    0x10+1
+
+CASE 12 - Selected expression with whitespace around it, replace with result
+Action: Select only `2+2` (do not include spaces), press Ctrl+Win+-
+Input line:
+    this and then   2+2   (spaces around selection)
+
+CASE 13 - No selection, whitespace robustness with power, append = result
+Action: No selection, caret at end of line, press Ctrl+Win+=
+Input line:
+        2**5

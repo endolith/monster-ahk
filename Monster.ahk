@@ -72,20 +72,39 @@ MsgBox Result = %r%`nTime = %t%                                    ; -1.93288: ~
 
 ^#-::                                  ; Replace selection or `expression with result
 ^#=::                                  ; Append result to selection or `expression
-   ClipBoard =
+   Clipboard =
    SendInput ^c                        ; copy selection
    ClipWait 0.5
    If (ErrorLevel) {                   ; Nothing selected: Process the entire line
       SendInput +{HOME}^c              ; copy, keep selection to overwrite (^x for some apps)
       ClipWait 1
       IfEqual ErrorLevel,1, Return
-      If RegExMatch(ClipBoard, "(.*)(``)(.*)", y)
-         ; TODO: Instead of rewriting the entire line (which takes a long time and results in
-         ; corruption if interrupted), just move cursor to {END} of line, split input string
-         ; at `, backspace that many and Eval just the tail
-         SendInput %  "{RAW}" y1 . (A_ThisHotKey="^#=" ? y3 . " = "  : "") . Eval(y3)
-   } Else                              ; Text selected: Process it
-      SendInput % "{RAW}" . (A_ThisHotKey="^#=" ? ClipBoard . " = "  : "") . Eval(ClipBoard)
+      clipNoNL := RegExReplace(Clipboard, "[\r\n]+$") ; remove trailing newlines
+      If RegExMatch(clipNoNL, "(.*)(``)(.*)", y)
+         output := y1 . (A_ThisHotKey="^#=" ? y3 . " = " : "") . Eval(y3)
+      Else
+         output := (A_ThisHotKey="^#=" ? clipNoNL . " = " : "") . Eval(clipNoNL)
+      SendInput +{HOME}                ; re-select copied line so we replace it, not append
+      SendInput % "{RAW}" . output
+   } Else {                            ; Text selected: Process it
+      clipNoNL := RegExReplace(Clipboard, "[\r\n]+$") ; remove trailing newlines
+      If InStr(Clipboard, "`n") || InStr(Clipboard, "`r") {
+         ; Editor copied whole line (no selection) - strip leading whitespace so it doesn't
+         ; double up with the indentation that +{HOME} leaves in place
+         clipExpr := RegExReplace(clipNoNL, "^\s+")
+         If RegExMatch(clipExpr, "(.*)(``)(.*)", y)
+            output := y1 . (A_ThisHotKey="^#=" ? y3 . " = " : "") . Eval(y3)
+         Else
+            output := (A_ThisHotKey="^#=" ? clipExpr . " = " : "") . Eval(clipExpr)
+         SendInput +{HOME}             ; re-select non-whitespace part of line before replacing
+      } Else {
+         If RegExMatch(clipNoNL, "(.*)(``)(.*)", y)
+            output := y1 . (A_ThisHotKey="^#=" ? y3 . " = " : "") . Eval(y3)
+         Else
+            output := (A_ThisHotKey="^#=" ? clipNoNL . " = " : "") . Eval(clipNoNL)
+      }
+      SendInput % "{RAW}" . output
+   }
 Return
 
 Eval(x) {                              ; non-recursive PRE/POST PROCESSING: I/O forms, numbers, ops, ";"
