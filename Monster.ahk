@@ -4,6 +4,8 @@ Menu, Tray, Icon, calculator.ico
 
 ; Ctrl+Win+- replaces the expression with the result
 ; Ctrl+Win+= appends an "=" and the result.
+; NOTE: PowerToys Keyboard Manager can globally intercept/remap Win-based shortcuts.
+; If these hotkeys stop firing, check PowerToys remaps first.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
