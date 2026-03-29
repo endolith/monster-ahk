@@ -56,7 +56,7 @@ The output format can also be specified.
 - With `${k}`: k (optional integer) decimal digits are shown after the decimal point, in case of floating point result
 - With `${k}e` or `${k}g`: k decimal digits are shown of floating point results, in exponential or general scientific form, respectively
 - With `$x` or `$h`: Rounded results are shown in hex
-- With `$b{W}`: Rounded results are shown in binary form (LS W-bits; W="": first bit is sign: `1000` = -8, `0111` = 7)
+- With `$b{W}`: Rounded results are shown in binary form. Omit the width for variable-length output (first character is the sign bit, same convention as binary literals in expressions; e.g. `$b -8` → `1000`, while `$b +7` → `0111`). With width `W`, fixed-width representation of the least significant `W` bits of the rounded integer; negatives use two's complement in those bits (e.g. `$b7 35` → `0100011`).
 
 There are no precision limitations in version 1.1 or later. All intermediate results are computed and stored in full 64-bit accuracy.
 
