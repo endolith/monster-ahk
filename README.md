@@ -4,9 +4,11 @@
 
 This script gradually grew from twenty lines to over 250 AHK code lines. It might not be the best approach, but each time only a few new lines were added, so it was never feasible to start all over for a more general expression parser.
 
-The main point is not providing a standalone calculator, because there are hundreds of free ones available, but to allow evaluating a math expression typed in an editor or word processor. The compiled script can run in a PC, where AHK is not installed. It is easy to add new functions of one variable. Follow the examples of `SGN` (the sign of its argument), `Fib` (the n-th Fibonacci number) and `FAC` (the factorial). Two argument functions are implemented as operators: `9 gcd 6` is the same as it would be in functional form `gcd(9,6)`, which is 3. `4choose2` = 6, the binomial coefficient. Min and Max can be chained: `-1 min 2 min -5` gives -5; `3 max 5 max 2` = `max(3,5,2)` = 5. Further operators can be easily added to the script.
+The main point is not providing a standalone calculator, because there are hundreds of free ones available, but to allow evaluating a math expression typed in an editor or word processor. The compiled script can run on a PC, where AHK is not installed.
 
-User variables can be defined and used. They are kept in memory until the script is reloaded, with values assigned before they are used in expressions, like `a:=1; b:=2; a+b`. In later evaluated expressions `a` and `b` still have their last assigned values.
+It is easy to add new functions of one variable. Follow the examples of `SGN` (the sign of its argument), `Fib` (the n-th Fibonacci number) and `FAC` (the factorial). Two argument functions are implemented as operators: `9 gcd 6` is the same as it would be in functional form `gcd(9,6)`, which is 3. `4choose2` = 6, the binomial coefficient. Min and Max can be chained: `-1 min 2 min -5` gives -5; `3 max 5 max 2` = `max(3,5,2)` = 5. Further operators can be easily added to the script.
+
+User variables can be defined and used. They are kept in memory until the script is reloaded, with values assigned before they are used in expressions, like `a:=1; b:=2; a+b`. In later evaluated expressions, `a` and `b` still have their last assigned values.
 
 User functions (even recursive ones) can also be defined in expressions:
 
@@ -28,7 +30,7 @@ becomes
 The area is 125*32 = 4000
 ```
 
-If instead you press <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>-</kbd> at the the original line above, it becomes
+If instead you press <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>-</kbd> at the original line above, it becomes
 
 ```text
 The area is 4000
@@ -53,14 +55,14 @@ The output format can also be specified.
 - If the expression does not contain the format specifier `$`, 6 decimal digits are shown in the general form (`%0.6g` in C), and integers are in decimal
 - With `${k}`: k (optional integer) decimal digits are shown after the decimal point, in case of floating point result
 - With `${k}e` or `${k}g`: k decimal digits are shown of floating point results, in exponential or general scientific form, respectively
-- With `$x` or `$h`: Rounded results are shown Hex
+- With `$x` or `$h`: Rounded results are shown in hex
 - With `$b{W}`: Rounded results are shown in binary form (LS W-bits; W="": first bit is sign: `1000` = -8, `0111` = 7)
 
 There are no precision limitations in version 1.1 or later. All intermediate results are computed and stored in full 64-bit accuracy.
 
-The ternary operator `condition ? exp1 : exp2` is implemented as two low precedence operators: `a ? b` (which returns `b` if `a` is true, that is nonempty and nonzero. It evaluates to the empty string if `a` is false, that is empty or 0. The other operator `b : c` returns `c` if `b` is the empty string, otherwise it returns `b`. (It can also be used to set default values to uninitialized variables.) This saves time, because only the one of `b` or `c` is computed, which is returned. It also helps avoiding arithmetic errors, like in `x=0 ? 0 : 1/x`. Here 1/x is not computed if x=0.
+The ternary operator `condition ? exp1 : exp2` is implemented as two low precedence operators: `a ? b` (which returns `b` if `a` is true, that is nonempty and nonzero. It evaluates to the empty string if `a` is false, that is empty or 0. The other operator `b : c` returns `c` if `b` is the empty string, otherwise it returns `b`. (It can also be used to set default values to uninitialized variables.) This saves time, because only one of `b` or `c` is computed, which is returned. It also helps avoid arithmetic errors, like in `x=0 ? 0 : 1/x`. Here 1/x is not computed if x=0.
 
-There is, however, a little difference between this implementation and the true ternary operator `a ? b : c`. In Monster if `a` is true, `b` is returned by the `?` operator. If it happens to be empty (an error in an arithmetic expression), the following `:` operator does not know if `a` was false or this error occurred, and returns `c`, instead of the empty `b`. It was easy to change this behavior (e.g. `?` could return a special, non-numeric character when `a` is false and `:` checks for this character), but then we'd loose the "default value" function of the `:` operator `x:0`.
+There is, however, a little difference between this implementation and the true ternary operator `a ? b : c`. In Monster if `a` is true, `b` is returned by the `?` operator. If it happens to be empty (an error in an arithmetic expression), the following `:` operator does not know if `a` was false or this error occurred, and returns `c`, instead of the empty `b`. It was easy to change this behavior (e.g. `?` could return a special, non-numeric character when `a` is false and `:` checks for this character), but then we'd lose the "default value" function of the `:` operator `x:0`.
 
 Function names are internally enclosed by `'` characters, operators are enclosed by `«` and `»` characters, to prevent problems when their names happen to be the prefix or postfix of another name (like `tan`/`atan`/`at`).
 
