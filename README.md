@@ -16,7 +16,7 @@ f(x) := x < 2 ? 1 : x*f(x-1)
 
 Here the formal parameter `x` is not defined as a variable, it is a placeholder for the value given to the function at a call. The function definition also remains in memory until the script is terminated.
 
-As usage examples, two hotkeys obtain the math text from the current document. Ctrl+Win+- replaces the expression with the result, Ctrl+Win+= appends an "=" and the result. If a (multi-line) expression is selected, it gets evaluated. If there is nothing selected, the script searches for the last back-quote in the current line, and uses the text after it, until the insertion point (caret). For example, after pressing Win+Ctrl+= the text
+As usage examples, two hotkeys obtain the math text from the current document. <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>-</kbd> replaces the expression with the result, <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>=</kbd> appends an "=" and the result. If a (multi-line) expression is selected, it gets evaluated. If there is nothing selected, the script searches for the last back-quote in the current line, and uses the text after it, until the insertion point (caret). For example, after pressing <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>=</kbd> the text
 
 ```text
 The area is `125*32
@@ -28,7 +28,7 @@ becomes
 The area is 125*32 = 4000
 ```
 
-If instead you press Win+Ctrl+- at the the original line above, it becomes
+If instead you press <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>-</kbd> at the the original line above, it becomes
 
 ```text
 The area is 4000
