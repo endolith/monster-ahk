@@ -40,7 +40,7 @@ There are many features supported in the expressions:
 
 - They can contain HEX (`0x1ff`), Decimal (`123`, `1.23e2`) and Binary numbers (`'1001`, first bit = sign),
 - arbitrary number of nested parentheses (..)
-- variables (`a`, `b`), constants (`e`, `pi`, `inch`, `foot`, `mile`, `ounce`, `pint`, `gallon`, `oz`, `lb`)
+- variables (`a`, `b`), constants (`e`, `pi`, `inch`, `foot`, `mile`, `ounce`, `pint`, `gallon`, `oz`, `lb`) — Liquid measures are US, in liters
 - user defined functions
 - ternary- (`_ ? _ : _`) and logical operators `!`; `||`; `&&`
 - relational operators `=`; `<>`; `<`; `>`; `<=`; `>=`

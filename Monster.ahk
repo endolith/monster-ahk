@@ -31,7 +31,7 @@ Process Priority,,High
 
 xe := 2.718281828459045, xpi := 3.141592653589793      ; referenced as "e", "pi"
 xinch := 2.54, xfoot := 30.48, xmile := 1.609344       ; [cm], [cm], [Km]
-xounce := 0.02841, xpint := 0.5682, xgallon := 4.54609 ; liters
+xounce := 0.02957, xpint := 0.47318, xgallon := 3.7854 ; US liquid, liters
 xoz := 28.35, xlb := 453.59237                         ; gramms
 
 /* -test cases
