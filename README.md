@@ -82,3 +82,19 @@ Please report bugs! Regular expressions are heavily used, and they are notorious
 - Edit 20080524: Bugfix. Order of converting hex to decimal and adding missing decimal point to scientific numbers is swapped (Thanks Rajat)
 - Edit 20100511: gallon is now US, not imperial (thanks flyingDman)
 - Edit 20100818: Version 1.2 - use dynamic function calls to shorten code, make adding predefined functions easier
+
+## Other variants on GitHub
+
+- [7plus/Lib/Monster.ahk](https://github.com/7plus/7plus/blob/master/Lib/Monster.ahk)
+- [DeTK/계산기 예제.ahk](https://github.com/DeTK/ahkFiles/blob/master/%EA%B3%84%EC%82%B0%EA%B8%B0%20%EC%98%88%EC%A0%9C.ahk) ["Calculator example"]
+- [Ixiko/AHK-libs-and-classes-collection/libs/a-f/Eval.ahk](https://github.com/Ixiko/AHK-libs-and-classes-collection/blob/master/libs/a-f/Eval.ahk)
+- [Ixiko/AHK-libs-and-classes-collection/libs/a-f/examples/eval_demo.ahk](https://github.com/Ixiko/AHK-libs-and-classes-collection/blob/master/libs/a-f/examples/eval_demo.ahk)
+- [Ixiko/AHK-libs-and-classes-collection/libs/g-n/Monster.ahk](https://github.com/Ixiko/AHK-libs-and-classes-collection/blob/master/libs/g-n/Monster.ahk)
+- [My-AHK/Collections/Unit Converter.ahk](https://github.com/My-AHK/Collections/blob/main/Unit%20Converter/Unit%20Converter.ahk)
+- [Visionary1/AutoHotkey-Archive/ahkstdlib/samp/eval_demo.ahk](https://github.com/Visionary1/AutoHotkey-Archive/blob/master/ahkstdlib/samp/eval_demo.ahk)
+- [cqrg/runz/Lib/Eval.ahk](https://github.com/cqrg/runz/blob/master/Lib/Eval.ahk)
+- [drshajul/Autohotkey/Standard Library/samp/eval_demo.ahk](https://github.com/drshajul/Autohotkey/blob/master/Standard%20Library/samp/eval_demo.ahk)
+- [gitter-badger/lintalist/plugins/Calc.ahk](https://github.com/gitter-badger/lintalist/blob/master/plugins/Calc.ahk)
+- [goreliu/runz/Lib/Eval.ahk](https://github.com/goreliu/runz/blob/master/Lib/Eval.ahk)
+- [lintalist/lintalist/plugins/Calc.ahk](https://github.com/lintalist/lintalist/blob/master/plugins/Calc.ahk)
+- [vvPROJECT/vPanel/GUI/Calculator.ahk](https://github.com/vvPROJECT/vPanel/blob/main/GUI/Calculator.ahk)
