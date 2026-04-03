@@ -71,13 +71,13 @@ MsgBox Result = %r%`nTime = %t%                                    ; -1.93288: ~
    ClipBoard =
    SendInput ^c                        ; copy selection
    ClipWait 0.5
-   If (ErrorLevel) {
+   If (ErrorLevel) {                   ; Nothing selected: Process the entire line
       SendInput +{HOME}^c              ; copy, keep selection to overwrite (^x for some apps)
       ClipWait 1
       IfEqual ErrorLevel,1, Return
       If RegExMatch(ClipBoard, "(.*)(``)(.*)", y)
          SendInput %  "{RAW}" y1 . (A_ThisHotKey="^#=" ? y3 . " = "  : "") . Eval(y3)
-   } Else
+   } Else                              ; Text selected: Process it
       SendInput % "{RAW}" . (A_ThisHotKey="^#=" ? ClipBoard . " = "  : "") . Eval(ClipBoard)
 Return
 
