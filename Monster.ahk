@@ -75,8 +75,14 @@ MsgBox Result = %r%`nTime = %t%                                    ; -1.93288: ~
       SendInput +{HOME}^c              ; copy, keep selection to overwrite (^x for some apps)
       ClipWait 1
       IfEqual ErrorLevel,1, Return
-      If RegExMatch(ClipBoard, "(.*)(``)(.*)", y)
+      ; Rightmost backtick on the copied line: earlier backticks stay in the prefix (README).
+      StringGetPos pos, ClipBoard, ``, R
+      IfGreaterOrEqual pos,0
+      {
+         y1 := SubStr(ClipBoard, 1, pos)
+         y3 := SubStr(ClipBoard, pos+2)
          SendInput %  "{RAW}" y1 . (A_ThisHotKey="^#=" ? y3 . " = "  : "") . Eval(y3)
+      }
    } Else                              ; Text selected: Process it
       SendInput % "{RAW}" . (A_ThisHotKey="^#=" ? ClipBoard . " = "  : "") . Eval(ClipBoard)
 Return
