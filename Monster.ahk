@@ -68,17 +68,24 @@ MsgBox Result = %r%`nTime = %t%                                    ; -1.93288: ~
 
 ^#-::                                  ; Replace selection or `expression with result
 ^#=::                                  ; Append result to selection or `expression
+   ClipSaved := ClipboardAll           ; snapshot all formats; keep this assignment on its own line (AHK)
    ClipBoard =
    SendInput ^c                        ; copy selection
    ClipWait 0.5
    If (ErrorLevel) {                   ; Nothing selected: Process the entire line
       SendInput +{HOME}^c              ; copy, keep selection to overwrite (^x for some apps)
       ClipWait 1
-      IfEqual ErrorLevel,1, Return
+      IfEqual ErrorLevel,1, {
+         Clipboard := ClipSaved
+         ClipSaved := ""
+         Return
+      }
       If RegExMatch(ClipBoard, "(.*)(``)(.*)", y)
          SendInput %  "{RAW}" y1 . (A_ThisHotKey="^#=" ? y3 . " = "  : "") . Eval(y3)
    } Else                              ; Text selected: Process it
       SendInput % "{RAW}" . (A_ThisHotKey="^#=" ? ClipBoard . " = "  : "") . Eval(ClipBoard)
+   Clipboard := ClipSaved
+   ClipSaved := ""
 Return
 
 Eval(x) {                              ; non-recursive PRE/POST PROCESSING: I/O forms, numbers, ops, ";"
